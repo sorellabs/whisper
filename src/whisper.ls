@@ -51,7 +51,7 @@ whisper                                  = require './'
 ### -- Main ------------------------------------------------------------
 {docopt} = require 'docopt'
 pkg-meta = require '../package'
-ls = require 'LiveScript'
+
 
 # Parse options
 options = docopt doc, version: pkg-meta.version

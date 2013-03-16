@@ -5,7 +5,6 @@
   "main": "./lib/index.js",
   "bin": "./bin/whisper",
   "devDependencies": {
-    "LiveScript": "~1.1.1",
     "mocha": "~1.8.1"
   },
   "scripts": {
