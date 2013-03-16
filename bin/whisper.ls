@@ -40,9 +40,10 @@ doc = '''
       '''
 
 ### -- Dependencies ----------------------------------------------------
+path                                     = require 'path'
 whisper                                  = require '../lib/'
 { run }                                  = require '../lib/runner'
-{ load-config }                          = require '../lib/config'
+{ load-config, find-local-config }       = require '../lib/config'
 { environment-for, default-environment } = require '../lib/environment'
 { all-tasks }                            = require '../lib/tasks'
       
@@ -51,15 +52,23 @@ whisper                                  = require '../lib/'
 {docopt} = require 'docopt'
 pkg-meta = require '../package'
 
+
 # Parse options
 options = docopt doc, version: pkg-meta.version
 dir     = options['<file>'] or '.'
 env     = if options['env'] => environment-for options['<env>']
           else              => default-environment!
 
+
+# Change to the root of the project (if local)
+let project-root = find-local-config dir
+    if project-root => process.chdir (path.dirname project-root)
+
+
 # Load configuration
 (load-config dir).for-each (config) -> config whisper
 (require '../lib/core') whisper
+
 
 # Execute task
 run env, options['<task>'], ...options['<args>']
