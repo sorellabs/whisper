@@ -66,7 +66,7 @@ resolve = (name) ->
 #### λ as-action
 # Returns an wrapper on the task execution.
 #
-# :: Task -> () -> Promise
+# :: Task -> a... -> Promise
 as-action = (task) -> (...as) -> task.execute ...as
   
 
@@ -101,15 +101,15 @@ Task = Base.derive {
   #
   # :: Environment -> Promise
   execute: (env, ...args) -> unless @_executed
-    sequentially [@dependencies.map as-action] \
-              ++ [~> do
-                     @_promise  = Promise.make
-                     @_executed = true
-                     result = @fun env, ...args
+    sequentially ...( (@dependencies.map as-action) \
+                 ++ [~> do
+                        @_promise  = Promise.make!
+                        @_executed = true
+                        result = @fun env, ...args
 
-                     switch 
-                     | @_async   => @_promise
-                     | otherwise => @done result ]
+                        process.next-tick ~> if not @_async => @done result
+
+                        @_promise ])
 
   else => @_promise
     
