@@ -33,6 +33,10 @@ make-error  = require 'flaw'
 
 ### -- Error handling --------------------------------------------------
 
+#### λ task-exists-e
+# Signals a task with the same name has been registered.
+#
+# :: Task -> Error
 task-exists-e = (task) ->
   make-error '<task-exists-e>' \
            , """
@@ -44,19 +48,33 @@ task-exists-e = (task) ->
 
 
 ### -- Core implementation ---------------------------------------------
+
+#### Data all-tasks
+# Holds all tasks that have been registered.
+#
+# :: { String -> Task }
 all-tasks = {}
 
 
+#### {} Task
+# Represents a task, and allows running it.
+#
 Task = Base.derive {
+
   ##### λ init
+  # Initialises the Task instance.
+  #
   # :: String, [String], String, (Environment -> ()) -> Task
   init: (@name, @dependencies, @description, @fun) ->
     _async    = false
     _executed = false
     @register!
     this
-    
+   
+ 
   ##### λ execute
+  # Executes the task instance and its dependencies.
+  #
   # :: Environment -> Promise
   execute: (env, ...args) -> unless @_executed
     @_promise  = Promise.make
@@ -65,22 +83,28 @@ Task = Base.derive {
 
     switch 
     | @_async   => @_promise
-    | otherwise => @_promise.bind result
+    | otherwise => @done result
 
   else => @_promise
     
 
   ##### λ async
+  # Makes the Task asynchronous.
+  #
   # :: Bool -> Bool
   async: (v=true) -> @_async = v
 
 
   ##### λ done
+  # Signals the Task is done.
+  # 
   # :: a -> Promise a
   done: (status) -> @_promise.bind status
 
 
   ##### λ register
+  # Registers the task.
+  #
   # :: () -> ()
   register: ->
     | @name of all-tasks => throw task-exists-e this
@@ -88,8 +112,11 @@ Task = Base.derive {
 }
 
 
-
-task = (name, deps, desc, fun) -> Task.make name, deps, desc, fun
+#### λ
+# A convenience for creating Task instances.
+#
+# :: String -> [String] -> String -> (Environment -> ()) -> Task
+task = (name, deps, desc, fun) --> Task.make name, deps, desc, fun
   
 
 
