@@ -41,17 +41,17 @@ doc = '''
 
 ### -- Dependencies ----------------------------------------------------
 path                                     = require 'path'
-whisper                                  = require '../lib/'
-{ run }                                  = require '../lib/runner'
-{ load-config, find-local-config }       = require '../lib/config'
-{ environment-for, default-environment } = require '../lib/environment'
-{ all-tasks }                            = require '../lib/tasks'
+whisper                                  = require './'
+{ run }                                  = require './runner'
+{ load-config, find-local-config }       = require './config'
+{ environment-for, default-environment } = require './environment'
+{ all-tasks }                            = require './tasks'
       
 
 ### -- Main ------------------------------------------------------------
 {docopt} = require 'docopt'
 pkg-meta = require '../package'
-
+ls = require 'LiveScript'
 
 # Parse options
 options = docopt doc, version: pkg-meta.version
@@ -66,7 +66,7 @@ let project-root = find-local-config dir
 
 
 # Load configuration
-(require '../lib/core') whisper
+(require './core') whisper
 (load-config dir).for-each (config) -> config whisper
 
 
