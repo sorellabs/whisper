@@ -26,9 +26,10 @@
 
 
 ### -- Dependencies ----------------------------------------------------
-{ Base }    = require 'boo'
-{ Promise } = require 'cassie'
-make-error  = require 'flaw'
+{ Base }     = require 'boo'
+{ Promise }  = require 'cassie'
+make-error   = require 'flaw'
+sequentially = require 'cassie/src/sequencing'
 
 
 ### -- Error handling --------------------------------------------------
@@ -45,6 +46,29 @@ task-exists-e = (task) ->
              #{task.name} (#{task.dependencies.join ', '})
                  #{task.description or ''}
              """
+
+inexistent-tasks-e = (name) ->
+  make-error '<inexistent-task-e>' \
+           , "The task \"#name\" has not been registered."
+
+
+### -- Helpers ---------------------------------------------------------
+
+#### λ resolve
+# Resolves a task by name.
+#
+# :: String -> Task
+resolve = (name) ->
+  | name of all-tasks => all-tasks[name]
+  | otherwise         => throw inexistent-task-e name
+
+
+#### λ as-action
+# Returns an wrapper on the task execution.
+#
+# :: Task -> () -> Promise
+as-action = (task) -> (...as) -> task.execute ...as
+  
 
 
 ### -- Core implementation ---------------------------------------------
@@ -77,13 +101,15 @@ Task = Base.derive {
   #
   # :: Environment -> Promise
   execute: (env, ...args) -> unless @_executed
-    @_promise  = Promise.make
-    @_executed = true
-    result = @fun env, ...args
+    sequentially [@dependencies.map as-action] \
+              ++ [~> do
+                     @_promise  = Promise.make
+                     @_executed = true
+                     result = @fun env, ...args
 
-    switch 
-    | @_async   => @_promise
-    | otherwise => @done result
+                     switch 
+                     | @_async   => @_promise
+                     | otherwise => @done result ]
 
   else => @_promise
     
@@ -121,4 +147,4 @@ task = (name, deps, desc, fun) --> Task.make name, deps, desc, fun
 
 
 ### -- Exports ---------------------------------------------------------
-module.exports = { Task, task, all-tasks }
+module.exports = { Task, task, all-tasks, resolve }
