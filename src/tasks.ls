@@ -89,9 +89,10 @@ Task = Base.derive {
   # Initialises the Task instance.
   #
   # :: String, [String], String, (Environment -> ()) -> Task
-  init: (@name, @dependencies, @description, @fun) ->
-    _async    = false
-    _executed = false
+  init: (@name, deps, @description, @fun) ->
+    _async        = false
+    _executed     = false
+    @dependencies = deps.map resolve
     @register!
     this
    
