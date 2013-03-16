@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "A task-based automation app. Leiningen style.",
   "main": "./lib/index.js",
+  "bin": "./bin/whisper",
   "devDependencies": {
     "LiveScript": "~1.1.1",
     "mocha": "~1.8.1"
@@ -22,6 +23,13 @@
   "author": "Quildreen \"Sorella\" Motta <quildreen@gmail.com>",
   "license": "MIT",
   "readmeFilename": "README.md",
+  "keywords": [
+    "task",
+    "automation",
+    "build",
+    "make",
+    "whisper"
+  ],
   "calliope": {
     "output": "docs/api",
     "copyright": "© 2013 Quildreen \"Sorella\" Motta",
