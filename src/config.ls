@@ -76,6 +76,13 @@ read = (name) -> fs.read-file-sync name, 'utf-8'
 exists-p = fs.exists-sync
 
 
+#### λ callable-p
+# Checks if something is callable.
+#
+# :: a -> Bool
+callable-p = -> typeof it is 'function'
+
+
 #### λ root-p
 # Checks if a given directory is the root directory.
 #
@@ -90,13 +97,13 @@ root-p = (dir) -> (path.resolve dir) is (path.resolve '/')
 #
 # :: String -> Maybe String
 find-local-config = (dir, initial=dir) ->
-  whisper-file = path.join dir, '.whisper'
+  whisper-file = path.resolve dir, '.whisper'
   dir-above    = path.resolve dir, '..'
 
   switch
   | exists-p whisper-file => whisper-file
   | root-p dir-above      => null
-  | otherwise             => find-root-config dir-above, initial
+  | otherwise             => find-local-config dir-above, initial
 
 
 #### λ find-root-config
