@@ -5,12 +5,10 @@
   "main": "./lib/index.js",
   "devDependencies": {
     "LiveScript": "~1.1.1",
-    "mocha": "~1.8.1",
-    "es5-shim": "~2.0.5",
-    "browserify": "~2.4.3"
+    "mocha": "~1.8.1"
   },
   "scripts": {
-    "cc": "./node_modules/.bin/lsc -o lib -c src/*.ls",
+    "cc": "./node_modules/.bin/lsc -o lib -c src/*.ls && ./node_modules/.bin/lsc -o lib/core -c src/core/*.ls",
     "test-cc": "./node_modules/.bin/lsc -o lib-test -c test/*.ls",
     "pretest": "npm run-script cc && npm run-script test-cc",
     "test": "./node_modules/.bin/mocha lib-test/*.js",
@@ -27,18 +25,47 @@
   "calliope": {
     "output": "docs/api",
     "copyright": "© 2013 Quildreen \"Sorella\" Motta",
-    "packages": [{ "files": [ "src/*.ls" ] }]
+    "packages": [
+      {
+        "files": [
+          "src/*.ls"
+        ]
+      }
+    ]
   },
   "testling": {
     "files": "test/browser/suite.js",
     "preprocess": "npm run-script pretest-browser",
     "browsers": {
-      "ie": [8, 9, 10],
-      "firefox": [15, "nightly"],
-      "chrome": [21, 22, "canary"],
-      "opera": [10, 12, "next"],
-      "safari": [5.1]
+      "ie": [
+        8,
+        9,
+        10
+      ],
+      "firefox": [
+        15,
+        "nightly"
+      ],
+      "chrome": [
+        21,
+        22,
+        "canary"
+      ],
+      "opera": [
+        10,
+        12,
+        "next"
+      ],
+      "safari": [
+        5.1
+      ]
     },
     "harness": "mocha"
+  },
+  "dependencies": {
+    "flaw": "~0.1.0",
+    "boo": "~1.2.4",
+    "cassie": "~1.4.1",
+    "docopt": "~0.4.0"
   }
 }
