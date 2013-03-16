@@ -66,8 +66,8 @@ let project-root = find-local-config dir
 
 
 # Load configuration
-(load-config dir).for-each (config) -> config whisper
 (require '../lib/core') whisper
+(load-config dir).for-each (config) -> config whisper
 
 
 # Execute task
