@@ -24,17 +24,20 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-{ Promise }   = require 'cassie'
-{ all-tasks } = require './tasks'
-make-error    = require 'flaw'
+### -- Dependencies ----------------------------------------------------
+{ Promise }            = require 'cassie'
+{ all-tasks, resolve } = require './tasks'
+make-error             = require 'flaw'
 
-inexistent-tasks-e = (name) ->
-  make-error '<inexistent-task-e>' \
-           , "The task \"#name\" has not been registered."
   
+### -- Core implementation ---------------------------------------------
 
+#### λ run
+# Runs a task with the given environment/arguments.
+#
+# :: Environment, String, a... -> Promise
 run = (env, name, ...args) ->
-  | name of all-tasks => all-tasks[name].execute env, ...args
+  | name of all-tasks => (resolve name).execute env, ...args
   | otherwise         => Promise.make!fail (inexistent-task-e name)
 
 
