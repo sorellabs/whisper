@@ -40,7 +40,10 @@ module.exports = (whisper) ->
   ### -- Tasks ---------------------------------------------------------
   whisper.task 'help'
              , []
-             , """Displays usage information for a given task."""
+             , """Displays usage information for a given task.
+
+               Usage: whisper help [task]
+               """
              , (env, name) -> 
                  | not name  => throw no-task-e!
                  | otherwise => do
