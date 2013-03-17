@@ -62,6 +62,15 @@ invalid-config-e = (name) ->
 
 ### -- Helpers ---------------------------------------------------------
 
+#### Data home
+# The home directory for the current user.
+#
+# :: String
+home = let env = process.env
+       switch process.platform
+       | \win32    => env.USERPROFILE or (env.HOMEDRIVE + env.HOMEPATH)
+       | otherwise => env.HOME
+
 #### λ read
 # Reads the contents of a file as text.
 #
@@ -90,6 +99,7 @@ callable-p = -> typeof it is 'function'
 root-p = (dir) -> (path.resolve dir) is (path.resolve '/')
 
 
+
 ### -- Finding configuration files -------------------------------------
 
 #### λ find-local-config
@@ -111,9 +121,11 @@ find-local-config = (dir, initial=dir) ->
 #
 # :: () -> Maybe String
 find-root-config = ->
-  whisper-file = path.resolve '~/', '.whisper'
+  whisper-dir  = path.resolve home, '.whisper.d', '.whisper'
+  whisper-file = path.resolve home, '.whisper'
 
   switch
+  | exists-p whisper-dir  => whisper-dir
   | exists-p whisper-file => whisper-file
   | otherwise             => null
 
