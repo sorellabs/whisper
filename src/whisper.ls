@@ -80,8 +80,6 @@ configure '*', { whisper: args }
 task      = args._.shift!
 task-args = args._
 dir       = args.directory or '.'
-env       = if args.env => environment-for args.env
-            else        => default-environment!
 
 
 # Change to the root of the project (if local)
@@ -92,6 +90,11 @@ let project-root = find-local-config dir
 # Load configuration
 (require './core') whisper
 (load-config dir).for-each (config) -> config whisper
+
+
+# Grabs the correct environment
+env = if args.env => environment-for args.env
+      else        => default-environment!
 
 
 # Execute task
