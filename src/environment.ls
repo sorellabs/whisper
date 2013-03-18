@@ -46,7 +46,7 @@ environment = { }
 # :: { String -> a } -> { String -> a }
 # :: String, { String -> a } -> { String -> a }
 configure = (kind, data) -> switch arguments.length
-  | 1 => configure '*', data
+  | 1 => configure '*', kind
   | _ => do
          environment[kind] or= {}
          extend environment[kind], (data or {})
