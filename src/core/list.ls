@@ -40,8 +40,8 @@ module.exports = (whisper) ->
   # Returns the largest string on the list.
   # :: [String] -> String
   largest = (xs) -> xs.reduce ((a,b) ->
-                                     | a > b => a
-                                     | _     => b), ''
+                                     | a.length > b.length => a
+                                     | _                   => b), ''
 
   ### λ names
   # Returns just the names in the list.
@@ -57,7 +57,7 @@ module.exports = (whisper) ->
   # Repeats a String `n` times.
   # :: Number -> String
   repeat = (n, text) -->
-    | n is 0 => ''
+    | n <= 0 => ''
     | _      => (Array n).join text
 
   ### λ task-item
@@ -72,7 +72,7 @@ module.exports = (whisper) ->
   list-tasks = (xs) ->
     tasks   = [x for _, x of xs]
     padding = (largest (names tasks)).length + 5
-    tasks.map (task-item padding)
+    tasks.map (task-item padding) .sort!
                                      
 
   ### -- Tasks ---------------------------------------------------------
