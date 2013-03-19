@@ -90,8 +90,9 @@ Task = Base.derive {
   #
   # :: String, [String], String, (Environment -> ()) -> Task
   init: (@name, deps, @description, @fun) ->
-    _async        = false
-    _executed     = false
+    @_executed    = false
+    @async        = false
+    @promise      = Promise.make!
     @dependencies = deps.map resolve
     @register!
     this
@@ -104,29 +105,14 @@ Task = Base.derive {
   execute: (env, ...args) -> unless @_executed
     sequentially ...( (@dependencies.map as-action) \
                  ++ [~> do
-                        @_promise  = Promise.make!
                         @_executed = true
                         result = @fun env, ...args
 
-                        process.next-tick ~> if not @_async => @done result
+                        process.next-tick ~> if not @async => @promise.bind result
 
-                        @_promise ])
+                        @promise ])
 
-  else => @_promise
-    
-
-  ##### λ async
-  # Makes the Task asynchronous.
-  #
-  # :: Bool -> Bool
-  async: (v=true) -> @_async = v
-
-
-  ##### λ done
-  # Signals the Task is done.
-  # 
-  # :: a -> Promise a
-  done: (status) -> @_promise.bind status
+  else => @promise
 
 
   ##### λ register
