@@ -1,6 +1,6 @@
 {
   "name": "whisper",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A task-based automation app. Leiningen style.",
   "main": "./lib/index.js",
   "bin": "./bin/whisper",
@@ -39,35 +39,6 @@
         ]
       }
     ]
-  },
-  "testling": {
-    "files": "test/browser/suite.js",
-    "preprocess": "npm run-script pretest-browser",
-    "browsers": {
-      "ie": [
-        8,
-        9,
-        10
-      ],
-      "firefox": [
-        15,
-        "nightly"
-      ],
-      "chrome": [
-        21,
-        22,
-        "canary"
-      ],
-      "opera": [
-        10,
-        12,
-        "next"
-      ],
-      "safari": [
-        5.1
-      ]
-    },
-    "harness": "mocha"
   },
   "dependencies": {
     "flaw": "~0.1.0",
