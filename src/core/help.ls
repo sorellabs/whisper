@@ -26,17 +26,6 @@
 
 module.exports = (whisper) ->
 
-  ### -- Error handling ------------------------------------------------
-  make-error = require 'flaw'
-
-  no-task-e = -> 
-    make-error '<no-task-e>'
-             , "`help` expects a task name, none was given."
-
-  unknown-task-e = (n) ->
-    make-error '<unknown-task-e>'
-             , "The task \"#n\" is not registered."
-
   ### -- Tasks ---------------------------------------------------------
   whisper.task 'help'
              , []
@@ -45,7 +34,7 @@ module.exports = (whisper) ->
                Usage: whisper help [task]
                """
              , (env, name) -> 
-                 | not name  => throw no-task-e!
+                 | not name  => whisper.log.fatal "`help` expects a task name, none was given."
                  | otherwise => do
                                 if name of whisper.all-tasks
                                   task = whisper.all-tasks[name]
@@ -54,4 +43,5 @@ module.exports = (whisper) ->
 
                                               #{task.description}
                                               """
-                                else => throw unknown-task-e name
+                                else
+                                  whisper.log.fatal "The task \"#{name}\" is not registered." 

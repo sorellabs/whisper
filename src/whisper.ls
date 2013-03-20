@@ -100,6 +100,8 @@ let project-root = find-local-config dir
 
 
 # Load configuration
+whisper <<< { log: log.derive { prefix: task } }
+
 (require './core') whisper
 (load-config dir).for-each (config) -> config whisper
 
