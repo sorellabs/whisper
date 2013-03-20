@@ -41,9 +41,9 @@ opts = '''
 # -- Dependencies ------------------------------------------------------
 path    = require 'path'
 whisper = require './'
+log     = require './log'
 
-{ run } = require './runner'
-{ all-tasks } = require './tasks'
+{ all-tasks, resolve } = require './tasks'
 { load-config, find-local-config } = require './config'
 { environment-for, default-environment, configure } = require './environment'
 
@@ -57,7 +57,19 @@ show-help = ->
   
 show-usage = (env) ->
   console.log (doc + '\n')
-  run env, 'list', []
+  (resolve 'list').execute env, []
+
+show-alternatives = (task) ->
+  log.fatal "The task \"#task\" has not been registered."  
+
+run-task = (task, env, task-args) ->
+  try
+    (resolve task).execute env, ...task-args
+  catch e
+    switch e.name
+    | '<inexistent-task-e>' => show-alternatives task
+    | otherwise             => throw e
+
 
 # -- Main --------------------------------------------------------------
 args     = (require 'optimist')
@@ -101,5 +113,5 @@ env = if args.env => environment-for args.env
 switch
 | args.version => show-version pkg-meta.version
 | args.help    => show-help!
-| task         => run env, task, ...task-args
+| task         => run-task task, env, task-args
 | otherwise    => show-usage env

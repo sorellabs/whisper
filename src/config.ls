@@ -27,8 +27,7 @@
 ### -- Dependencies ----------------------------------------------------
 fs         = require 'fs'
 path       = require 'path'
-make-error = require 'flaw'
-
+log        = require './log'
 
 ### -- Interfaces ------------------------------------------------------
 
@@ -36,28 +35,6 @@ make-error = require 'flaw'
 # The structure all configuration modules have to adhere to.
 #
 # :: Environment -> ()
-
-
-### -- Error handling --------------------------------------------------
-
-#### λ config-not-found-e
-# An error raised when the configuration file is not found.
-#
-# :: String -> Error
-config-not-found-e = (initial) ->
-  make-error '<config-not-found-e>' \
-           , "A configuration file couldn\'t be found above \"#initial\""
-
-
-#### λ invalid-config-e
-# An error raised when the configuration file doesn't adhere to the
-# interface.
-#
-# :: String -> Error
-invalid-config-e = (name) ->
-  make-error '<invalid-config-e>'                                     \
-           , "The configuration file \"#name\" doesn't implement the" \
-           + "configuration interface."
 
 
 ### -- Helpers ---------------------------------------------------------
@@ -146,7 +123,9 @@ find-config = (dir) ->
 # :: String -> Config
 load-single-config = (name) ->
   module = require name
-  if not callable-p module => throw invalid-config-e name
+  if not callable-p module
+    log.fatal "The configuration file \"#name\" doesn\'t export the 
+               expected configuration interface `Whisper -> ()`"
   module
 
 

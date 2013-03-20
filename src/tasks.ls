@@ -47,7 +47,7 @@ task-exists-e = (task) ->
                  #{task.description or ''}
              """
 
-inexistent-tasks-e = (name) ->
+inexistent-task-e = (name) ->
   make-error '<inexistent-task-e>' \
            , "The task \"#name\" has not been registered."
 

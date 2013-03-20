@@ -1,6 +1,6 @@
-## Module runner #######################################################
+## Module log ##########################################################
 #
-# Runs tasks.
+# A wrapper over the `lōchness` logging library.
 #
 # 
 # Copyright (c) 2013 Quildreen "Sorella" Motta <quildreen@gmail.com>
@@ -25,22 +25,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### -- Dependencies ----------------------------------------------------
-{ Promise }            = require 'cassie'
-{ all-tasks, resolve } = require './tasks'
-make-error             = require 'flaw'
-
-  
-### -- Core implementation ---------------------------------------------
-
-#### λ run
-# Runs a task with the given environment/arguments.
-#
-# :: Environment, String, a... -> Promise
-run = (env, name, ...args) ->
-  | name of all-tasks => (resolve name).execute env, ...args
-  | otherwise         => Promise.make!fail (inexistent-task-e name)
+{ Logger } = require 'lochness'
 
 
-
 ### -- Exports ---------------------------------------------------------
-module.exports = { run }
+module.exports = Logger.make!derive {
+  fatal: (message) ->
+    Logger.fatal.call this, message
+    process.exit 1
+}

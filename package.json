@@ -1,6 +1,6 @@
 {
   "name": "whisper",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "A task-based automation app. Leiningen style.",
   "main": "./lib/index.js",
   "bin": "./bin/whisper",
@@ -44,6 +44,7 @@
     "flaw": "~0.1.0",
     "boo": "~1.2.4",
     "cassie": "~1.4.1",
-    "optimist": "~0.3.5"
+    "optimist": "~0.3.5",
+    "lochness": "~0.1.0"
   }
 }
