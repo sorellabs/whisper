@@ -47,6 +47,10 @@ task-exists-e = (task) ->
                  #{task.description or ''}
              """
 
+#### λ inexistent-task-e
+# Signals a task with the given name wasn't found.
+#
+# :: String -> Error
 inexistent-task-e = (name) ->
   make-error '<inexistent-task-e>' \
            , "The task \"#name\" has not been registered."
