@@ -55,6 +55,13 @@ home = let env = process.env
 read = (name) -> fs.read-file-sync name, 'utf-8'
 
 
+#### λ read-json
+# Reads the contents of a file as JSON.
+#
+# :: String -> a
+read-json = JSON.parse . read
+
+
 #### λ exists-p
 # Checks if a file exists.
 #
@@ -137,12 +144,83 @@ load-config = (dir) ->
   (find-config dir).map load-single-config
 
 
+### -- Loading package configuration -----------------------------------
+
+#### λ package-from-whisper
+# Returns a `package.json` file for a `.whisper` file.
+#
+# :: String -> { String -> a }
+package-from-whisper = (name) ->
+  path.resolve name, '..', 'package.json'
+
+
+#### λ find-root-package
+# Returns the root `package.json` if it exists.
+#
+# :: String -> Maybe String
+find-root-package = ->
+  file = path.resolve home, '.whisper.d', 'package.json'
+  switch
+  | exists-p file => file
+  | otherwise     => null
+
+
+#### λ find-local-package
+# Returns the local `package.json` if it exists.
+#
+# :: String -> Maybe String
+find-local-package = (dir) ->
+  local = find-local-config dir
+  pkg   = package-from-whisper local
+  switch
+  | local                   => (exists-p pkg) and pkg
+  | exists-p 'package.json' => path.resolve 'package.json'
+  | otherwise               => null
+
+
+#### λ find-packages
+# Returns a list of `package.json` files.
+#
+# :: String -> [Maybe String]
+find-packages = (dir) ->
+  [find-root-package!, find-local-package dir].filter Boolean
+
+
+#### λ load-single-package-config
+# Tries to loads a single `package.json` file.
+#
+# :: String -> Maybe { String -> a }
+load-single-package-config = (name) ->
+  | exists-p name => read-json name
+  | otherwise     => null
+
+
+#### λ load-package-config
+# Loads all `package.json` configuration for the .whisper files.
+#
+# :: String -> [{ String -> a }]
+load-package-config = (dir) ->
+  (find-packages dir).map load-single-package-config
+
+
+#### λ whisper-config
+# Extracts the whisper configuration from an object
+#
+# :: { String -> a } -> Maybe { String -> a }
+whisper-config = (config) -> config.whisper or {}
+
+
 
 ### -- Exports ---------------------------------------------------------
 module.exports = {
+  home
+
   # Finding configuration files
   find-local-config, find-root-config, find-config
 
   # Loading configuration files
   load-single-config, load-config
+
+  # Loading package.json files
+  load-single-package-config, load-package-config, whisper-config
 }

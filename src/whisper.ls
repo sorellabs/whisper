@@ -44,11 +44,18 @@ whisper = require './'
 log     = require './log'
 
 { all-tasks, resolve } = require './tasks'
-{ load-config, find-local-config } = require './config'
+{ load-config, find-local-config, find-config, home \
+, load-package-config, whisper-config } = require './config'
 { environment-for, default-environment, configure } = require './environment'
 
 
 # -- Helpers -----------------------------------------------------------
+try-require = (module) ->
+  try
+    require module
+  catch e
+    require (path.resolve home, '.whisper.d', 'node_modules', module)
+
 show-version = (version) ->
   console.log "whisper #version"
 
@@ -87,21 +94,30 @@ pkg-meta = require '../package'
 
 
 # Parse options
-configure '*', { whisper: args }
-
 task      = args._.shift!
 task-args = args._
 dir       = args.directory or '.'
 
 
+# Configuration
+project-root   = find-local-config dir
+current-config = (load-package-config dir).map whisper-config
+                                          .reduce (<<<), {}
+
+configure { whisper: { command: args, root: project-root } <<< current-config }
+
+
 # Change to the root of the project (if local)
-let project-root = find-local-config dir
-    if project-root => process.chdir (path.dirname project-root)
+if project-root => process.chdir (path.dirname project-root)
 
 
-# Load configuration
+# Prepare the `whisper` object
 whisper <<< { log: log.derive { prefix: task } }
 
+# Load plugins
+current-config.plugins?.for-each -> (try-require it) whisper
+
+# Load .whisper configuration
 (require './core') whisper
 (load-config dir).for-each (config) -> config whisper
 
