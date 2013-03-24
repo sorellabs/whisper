@@ -24,10 +24,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+### -- Dependencies ----------------------------------------------------
+{ Eventful } = require 'ekho'
 { all-tasks, task } = require './tasks'
 { configure } = require './environment'
 
 
 
 ### -- Exports ---------------------------------------------------------
-module.exports = { all-tasks, task, configure }
+module.exports = Eventful.make! <<< { all-tasks, task, configure }
