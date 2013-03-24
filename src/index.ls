@@ -26,10 +26,10 @@
 
 ### -- Dependencies ----------------------------------------------------
 { Eventful } = require 'ekho'
-{ all-tasks, task } = require './tasks'
+{ all-tasks, task, resolve } = require './tasks'
 { configure } = require './environment'
 
 
 
 ### -- Exports ---------------------------------------------------------
-module.exports = Eventful.make! <<< { all-tasks, task, configure }
+module.exports = Eventful.make! <<< { all-tasks, resolve, task, configure }

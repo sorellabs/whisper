@@ -36,8 +36,8 @@ module.exports = (whisper) ->
              , (env, name) -> 
                  | not name  => whisper.log.fatal "`help` expects a task name, none was given."
                  | otherwise => do
-                                if name of whisper.all-tasks
-                                  task = whisper.all-tasks[name]
+                                try
+                                  task = whisper.resolve name
                                   console.log """
                                               \# #{name}
 
