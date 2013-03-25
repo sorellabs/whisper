@@ -52,7 +52,7 @@ log     = require './log'
 # -- Helpers -----------------------------------------------------------
 try-require = (module) ->
   try
-    require module
+    require (path.resolve project-root, 'node_modules', module)
   catch e
     require (path.resolve home, '.whisper.d', 'node_modules', module)
 
@@ -61,13 +61,13 @@ show-version = (version) ->
 
 show-help = ->
   console.log (doc + '\n\n' + opts)
-  
+
 show-usage = (env) ->
   console.log (doc + '\n')
   (resolve 'list').execute env, []
 
 show-alternatives = (task) ->
-  log.fatal "The task \"#task\" has not been registered."  
+  log.fatal "The task \"#task\" has not been registered."
 
 run-task = (task, env, task-args) ->
   try
@@ -89,7 +89,7 @@ args     = (require 'optimist')
              .string \f
              .string \e
              .argv
-             
+
 pkg-meta = require '../package'
 
 
