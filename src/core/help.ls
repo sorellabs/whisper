@@ -43,5 +43,6 @@ module.exports = (whisper) ->
 
                                               #{task.description}
                                               """
-                                else
-                                  whisper.log.fatal "The task \"#{name}\" is not registered." 
+                                catch e
+                                  switch e.name
+                                  | '<inexistent-task-e>' => whisper.log.fatal "The task \"#{name}\" is not registered." 
