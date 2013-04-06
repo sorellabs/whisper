@@ -1,6 +1,6 @@
 {
   "name": "whisper",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "A task-based automation app. Leiningen style.",
   "main": "./lib/index.js",
   "bin": "./bin/whisper",
@@ -43,9 +43,10 @@
   "dependencies": {
     "flaw": "~0.1.0",
     "boo": "~1.2.4",
-    "cassie": "~1.4.1",
     "optimist": "~0.3.5",
     "lochness": "~0.1.0",
-    "ekho": "~0.3.0"
+    "ekho": "~0.3.0",
+    "pinky-combinators": "~0.1.1",
+    "pinky": "~0.1.2"
   }
 }

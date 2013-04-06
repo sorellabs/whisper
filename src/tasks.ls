@@ -2,9 +2,9 @@
 #
 # Defines and handles tasks.
 #
-# 
+#
 # Copyright (c) 2013 Quildreen "Sorella" Motta <quildreen@gmail.com>
-# 
+#
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
 # (the "Software"), to deal in the Software without restriction,
@@ -12,10 +12,10 @@
 # publish, distribute, sublicense, and/or sell copies of the Software,
 # and to permit persons to whom the Software is furnished to do so,
 # subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,9 +27,10 @@
 
 ### -- Dependencies ----------------------------------------------------
 { Base }     = require 'boo'
-{ Promise }  = require 'cassie'
+pinky        = require 'pinky'
+{ pipeline } = require 'pinky-combinators'
 make-error   = require 'flaw'
-sequentially = require 'cassie/src/sequencing'
+
 
 
 ### -- Error handling --------------------------------------------------
@@ -72,7 +73,7 @@ resolve = (name) ->
 #
 # :: Task -> a... -> Promise
 as-action = (task) -> (...as) -> task.execute ...as
-  
+
 
 
 ### -- Core implementation ---------------------------------------------
@@ -94,29 +95,19 @@ Task = Base.derive {
   #
   # :: String, [String], String, (Environment -> ()) -> Task
   init: (@name, deps, @description, @fun) ->
-    @_executed    = false
     @async        = false
-    @promise      = Promise.make!
     @dependencies = deps.map resolve
     @register!
     this
-   
- 
+
+
   ##### λ execute
   # Executes the task instance and its dependencies.
   #
   # :: Environment -> Promise
-  execute: (env, ...args) -> unless @_executed
-    sequentially ...( (@dependencies.map as-action) \
-                 ++ [~> do
-                        @_executed = true
-                        result = @fun env, ...args
-
-                        process.next-tick ~> if not @async => @promise.bind result
-
-                        @promise ])
-
-  else => @promise
+  execute: (env, ...args) ->
+    pipeline (@dependencies.map as-action) \
+          ++ [~> @fun env, ...args ]
 
 
   ##### λ register
@@ -134,7 +125,7 @@ Task = Base.derive {
 #
 # :: String -> [String] -> String -> (Environment -> ()) -> Task
 task = (name, deps, desc, fun) --> Task.make name, deps, desc, fun
-  
+
 
 
 ### -- Exports ---------------------------------------------------------
